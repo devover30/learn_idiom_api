@@ -1,0 +1,10 @@
+/target
+/cert
+*.tar
+/node_modules
+.env
+backup.sql
+static/main.css
+/db_seed
+setup_env.sh
+.dockerignore

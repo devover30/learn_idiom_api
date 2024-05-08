@@ -1,0 +1,18 @@
+version: "3.9"
+
+services:
+  learn_idiom_db:
+    image: postgres:16.1-alpine3.19
+    container_name: learn_idiom_db
+    environment:
+      POSTGRES_USER: db_user
+      POSTGRES_PASSWORD: User_2024
+      POSTGRES_DB: idiom_v1
+    volumes:
+      - learn_idiom_db_data:/var/lib/postgresql/data
+    ports:
+      - 5440:5432
+volumes:
+  learn_idiom_db_data:
+    driver: local
+    name: learn_idiom_db_data

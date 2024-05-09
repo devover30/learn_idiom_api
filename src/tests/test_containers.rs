@@ -1,6 +1,5 @@
 #![allow(unused_imports)]
 use std::{process, thread};
-
 use testcontainers::runners::AsyncRunner;
 use testcontainers_modules::postgres;
 use tokio::time;
@@ -30,9 +29,6 @@ async fn test_container() {
     };
 
     run_migrations(conn.clone()).await;
-
-    let ten_millis = time::Duration::from_secs(100);
-    thread::sleep(ten_millis);
 
     assert_eq!(1, 1);
 }

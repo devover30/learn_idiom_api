@@ -2,7 +2,6 @@ mod error;
 mod idiom_resource;
 mod models;
 mod tests;
-use axum::middleware;
 use axum::routing::{delete, post, put};
 use axum::{routing::get, Router};
 use error::AppError;
@@ -69,10 +68,10 @@ async fn main() {
 pub fn app(db: PgPool) -> Router {
     Router::new()
         // Here we setup the routes. Note: No macros
-        //.route(
-        //    "/idioms",
-        //    get(entry_resource::entry_controller::get_entry_types_action),
-        //)
+        .route(
+            "/idioms",
+            post(idiom_resource::controller::get_idiom_by_user),
+        )
         .with_state(Arc::new(models::AppState { db }))
         // Using tower to add tracing layer
         .layer(

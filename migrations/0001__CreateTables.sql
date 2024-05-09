@@ -6,11 +6,9 @@ CREATE TABLE IF NOT EXISTS idioms_tbl (
     UNIQUE (id)
 );
 
-CREATE TABLE IF NOT EXISTS idioms_request_tbl (
+CREATE TABLE IF NOT EXISTS req_tbl (
     _id serial PRIMARY KEY,
-    id VARCHAR(100) NOT NULL,
     req_user VARCHAR(100) NOT NULL,
     is_read BOOLEAN NOT NULL,
-    idiom VARCHAR(100) REFERENCES idioms_tbl (id),
-    UNIQUE (id)
+    idiom VARCHAR(100) REFERENCES idioms_tbl (id)
 );

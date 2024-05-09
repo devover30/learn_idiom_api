@@ -7,25 +7,15 @@ pub struct AppState {
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct AuthSessionDTO {
-    pub session_id: String,
-    pub code_challenge: String,
-    pub code_verifier: String,
-}
-
-#[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct AuthSessionEntity {
-    pub id: i32,
-    pub auth_session: AuthSessionDTO,
+pub struct IdiomReqDTO {
+    pub user: String,
 }
 
 #[async_trait]
-pub trait EntryTableMutations {
-    async fn update(&self, db: PgPool) -> Result<(), sqlx::Error>;
-
+pub trait IdiomRequestMutations {
     async fn insert(&self, db: PgPool) -> Result<(), sqlx::Error>;
 
-    async fn delete(&self, db: PgPool) -> Result<(), sqlx::Error>;
+    async fn update(&self, db: PgPool) -> Result<(), sqlx::Error>;
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
@@ -40,4 +30,11 @@ pub struct IdiomDetailEntity {
     pub id: String,
     pub idiom_eng: String,
     pub idiom_hin: String,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct IdiomRequestEntity {
+    pub req_user: String,
+    pub is_read: bool,
+    pub idiom: IdiomDetailEntity,
 }

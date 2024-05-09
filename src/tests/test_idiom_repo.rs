@@ -1,14 +1,12 @@
 #![allow(unused_imports)]
-use std::{process, thread};
-
+use std::process::{self, Command, Stdio};
 use testcontainers::runners::AsyncRunner;
 use testcontainers_modules::postgres;
-use tokio::time;
 
-use crate::{get_db_pool_conn, run_migrations};
+use crate::{get_db_pool_conn, idiom_resource::repository::select_all_idioms, run_migrations};
 
 #[tokio::test]
-async fn test_container() {
+async fn test_select_idioms() {
     let node = postgres::Postgres::default().start().await;
 
     // Get the PostgreSQL port
@@ -31,8 +29,14 @@ async fn test_container() {
 
     run_migrations(conn.clone()).await;
 
-    let ten_millis = time::Duration::from_secs(100);
-    thread::sleep(ten_millis);
+    let idioms_list = match select_all_idioms(conn.clone()).await {
+        Ok(list) => list,
+        Err(err) => {
+            println!("db error");
+            println!("{:?}", err);
+            process::exit(1);
+        }
+    };
 
-    assert_eq!(1, 1);
+    assert_eq!(idioms_list.len(), 199);
 }

@@ -7,10 +7,26 @@ use axum::{extract::State, Form, Json};
 use rand::Rng;
 use std::sync::Arc;
 
+use super::repository::select_all_idioms_not_read;
+
 pub async fn get_idiom_by_user(
     State(data): State<Arc<AppState>>,
     Form(req_dto): Form<IdiomReqDTO>,
 ) -> Result<Json<IdiomDetailEntity>, AppError> {
+    let mut idiom_req_list =
+        match select_all_idioms_not_read(data.db.clone(), req_dto.user.clone()).await {
+            Ok(list) => list,
+            Err(err) => {
+                tracing::error!("{:?}", err);
+                return Err(AppError::DatabaseError);
+            }
+        };
+
+    if idiom_req_list.len() > 0 {
+        let not_read_idiom = idiom_req_list.remove(0).idiom;
+        return Ok(Json(not_read_idiom));
+    }
+
     let mut idiom_list = match select_all_idioms(data.db.clone()).await {
         Ok(list) => list,
         Err(err) => {
@@ -19,11 +35,12 @@ pub async fn get_idiom_by_user(
         }
     };
 
-    /**
+    /*
      * As rand doesn't impl 'Send' Trait i had to encapsulate non-async
      * code in another function and then call that function
      * from here (async function)
      */
+
     let idiom = idiom_list.remove(get_random_string(idiom_list.len()));
 
     let idiom_req = IdiomRequestEntity {

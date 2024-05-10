@@ -19,6 +19,11 @@ pub async fn get_idiom_by_user(
         }
     };
 
+    /**
+     * As rand doesn't impl 'Send' Trait i had to encapsulate non-async
+     * code in another function and then call that function
+     * from here (async function)
+     */
     let idiom = idiom_list.remove(get_random_string(idiom_list.len()));
 
     let idiom_req = IdiomRequestEntity {

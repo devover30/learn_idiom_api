@@ -4,17 +4,16 @@ use serde_json::json;
 #[derive(Debug)]
 pub enum AppError {
     DatabaseError,
-    ServerError,
     NotFoundError,
 }
 
 impl IntoResponse for AppError {
     fn into_response(self) -> axum::response::Response {
         let (status, err_msg) = match self {
-            Self::ServerError => (
-                StatusCode::INTERNAL_SERVER_ERROR,
-                "The server encountered an internal error while processing this request.",
-            ),
+            //Self::ServerError => (
+            //    StatusCode::INTERNAL_SERVER_ERROR,
+            //    "The server encountered an internal error while processing this request.",
+            //),
             Self::DatabaseError => (
                 StatusCode::INTERNAL_SERVER_ERROR,
                 "The server encountered an internal error while processing this request.",

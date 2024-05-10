@@ -89,14 +89,15 @@ async fn test_insert_idiom_req_tbl() {
         }
     }
 
-    let idiom_req_entity_list = match select_all_idioms_not_read(conn.clone()).await {
-        Ok(rows) => rows,
-        Err(err) => {
-            println!("Error Selecting from requesting table");
-            println!("{:?}", err);
-            process::exit(1);
-        }
-    };
+    let idiom_req_entity_list =
+        match select_all_idioms_not_read(conn.clone(), "1".to_string()).await {
+            Ok(rows) => rows,
+            Err(err) => {
+                println!("Error Selecting from requesting table");
+                println!("{:?}", err);
+                process::exit(1);
+            }
+        };
 
     assert_eq!(idiom_req_entity_list.len(), 1);
     assert_eq!(idiom_req_entity_list[0].idiom.id, "r4UwUyMzB3AB9MoY");
@@ -154,14 +155,15 @@ async fn test_update_idiom_req_tbl() {
         }
     }
 
-    let idiom_req_entity_list = match select_all_idioms_not_read(conn.clone()).await {
-        Ok(rows) => rows,
-        Err(err) => {
-            println!("Error Selecting from requesting table");
-            println!("{:?}", err);
-            process::exit(1);
-        }
-    };
+    let idiom_req_entity_list =
+        match select_all_idioms_not_read(conn.clone(), "1".to_string()).await {
+            Ok(rows) => rows,
+            Err(err) => {
+                println!("Error Selecting from requesting table");
+                println!("{:?}", err);
+                process::exit(1);
+            }
+        };
 
     assert_eq!(idiom_req_entity_list.len(), 0);
     assert_eq!(idiom_req_entity_list[0].idiom.id, "r4UwUyMzB3AB9MoY");

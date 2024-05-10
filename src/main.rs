@@ -2,8 +2,8 @@ mod error;
 mod idiom_resource;
 mod models;
 mod tests;
-use axum::routing::{delete, post, put};
-use axum::{routing::get, Router};
+use axum::routing::post;
+use axum::Router;
 use error::AppError;
 use sqlx::postgres::PgPoolOptions;
 use sqlx::PgPool;
@@ -21,7 +21,7 @@ async fn main() {
     tracing_subscriber::registry()
         .with(tracing_subscriber::EnvFilter::new(
             std::env::var("RUST_LOG")
-                .unwrap_or_else(|_| "learn_idiom_app=debug,tower_http=debug,axum=trace".into()),
+                .unwrap_or_else(|_| "learn_idiom_v1=debug,tower_http=debug,axum=trace".into()),
         ))
         .with(tracing_subscriber::fmt::layer())
         .init();

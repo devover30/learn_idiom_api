@@ -28,14 +28,19 @@ pub async fn select_all_idioms(db: PgPool) -> Result<Vec<IdiomDetailEntity>, sql
 
 pub async fn select_all_idioms_not_read(
     db: PgPool,
+    req_user: String,
 ) -> Result<Vec<IdiomRequestEntity>, sqlx::Error> {
     let query = r"
         SELECT ir.req_user,ir.is_read,i.id,i.idiom_eng,i.idiom_hin
         FROM req_tbl AS ir LEFT JOIN idioms_tbl AS i
-        ON ir.idiom = i.id WHERE ir.is_read = $1
+        ON ir.idiom = i.id WHERE ir.is_read = $1 AND ir.req_user = $2
         ";
 
-    let rows = sqlx::query(query).bind(false).fetch_all(&db).await?;
+    let rows = sqlx::query(query)
+        .bind(false)
+        .bind(req_user.clone())
+        .fetch_all(&db)
+        .await?;
 
     let mut idiom_req_list: Vec<IdiomRequestEntity> = Vec::new();
 

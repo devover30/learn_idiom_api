@@ -40,8 +40,8 @@ pub async fn select_idiom_req_by_id(
         ON ir.idiom = i.id WHERE ir.idiom = $1 AND ir.req_user = $2
         ";
     let row = sqlx::query(query)
-        .bind(user)
         .bind(idiom)
+        .bind(user)
         .fetch_one(&db)
         .await?;
 

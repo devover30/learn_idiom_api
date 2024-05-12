@@ -2,6 +2,7 @@ mod error;
 mod idiom_resource;
 mod models;
 mod tests;
+use axum::http::Method;
 use axum::routing::{post, put};
 use axum::Router;
 use error::AppError;
@@ -67,7 +68,9 @@ async fn main() {
 }
 
 pub fn app(db: PgPool) -> Router {
-    let cors = CorsLayer::new().allow_origin(Any);
+    let cors = CorsLayer::new()
+        .allow_methods([Method::GET, Method::POST, Method::PUT])
+        .allow_origin(Any);
     Router::new()
         // Here we setup the routes. Note: No macros
         .route(

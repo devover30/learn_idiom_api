@@ -2,7 +2,7 @@ mod error;
 mod idiom_resource;
 mod models;
 mod tests;
-use axum::routing::post;
+use axum::routing::{post, put};
 use axum::Router;
 use error::AppError;
 use sqlx::postgres::PgPoolOptions;
@@ -13,6 +13,7 @@ use std::{env, process};
 use tokio::net::TcpListener;
 use tokio::signal;
 use tower::ServiceBuilder;
+use tower_http::cors::{Any, CorsLayer};
 use tower_http::trace::TraceLayer;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
@@ -50,7 +51,7 @@ async fn main() {
 
     let app = app.fallback(handler_404);
 
-    let addr = SocketAddr::from(([0, 0, 0, 0], 9500));
+    let addr = SocketAddr::from(([0, 0, 0, 0], 11800));
     // Create a `TcpListener` using tokio.
     let listener = TcpListener::bind(&addr).await.unwrap();
 
@@ -66,13 +67,19 @@ async fn main() {
 }
 
 pub fn app(db: PgPool) -> Router {
+    let cors = CorsLayer::new().allow_origin(Any);
     Router::new()
         // Here we setup the routes. Note: No macros
         .route(
             "/idioms",
             post(idiom_resource::controller::get_idiom_by_user),
         )
+        .route(
+            "/idioms/:idiom_id",
+            put(idiom_resource::controller::update_idiom_read_action),
+        )
         .with_state(Arc::new(models::AppState { db }))
+        .layer(cors)
         // Using tower to add tracing layer
         .layer(
             ServiceBuilder::new()

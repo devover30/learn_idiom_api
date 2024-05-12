@@ -7,6 +7,9 @@ pub async fn select_all_idioms(db: PgPool) -> Result<Vec<IdiomDetailEntity>, sql
     let rows = sqlx::query(
         r"
         SELECT id,idiom_eng,idiom_hin FROM idioms_tbl
+        WHERE NOT EXISTS (
+            SELECT _id FROM req_tbl WHERE idioms_tbl.id = req_tbl.idiom
+            )
         ",
     )
     .fetch_all(&db)
@@ -24,6 +27,35 @@ pub async fn select_all_idioms(db: PgPool) -> Result<Vec<IdiomDetailEntity>, sql
     }
 
     Ok(idiom_list)
+}
+
+pub async fn select_idiom_req_by_id(
+    db: PgPool,
+    idiom: String,
+    user: String,
+) -> Result<IdiomRequestEntity, sqlx::Error> {
+    let query = r"
+        SELECT ir.req_user,ir.is_read,i.id,i.idiom_eng,i.idiom_hin
+        FROM req_tbl AS ir LEFT JOIN idioms_tbl AS i
+        ON ir.idiom = i.id WHERE ir.idiom = $1 AND ir.req_user = $2
+        ";
+    let row = sqlx::query(query)
+        .bind(user)
+        .bind(idiom)
+        .fetch_one(&db)
+        .await?;
+
+    let req = IdiomRequestEntity {
+        req_user: row.get("req_user"),
+        is_read: row.get("is_read"),
+        idiom: IdiomDetailEntity {
+            id: row.get("id"),
+            idiom_eng: row.get("idiom_eng"),
+            idiom_hin: row.get("idiom_hin"),
+        },
+    };
+
+    Ok(req)
 }
 
 pub async fn select_all_idioms_not_read(

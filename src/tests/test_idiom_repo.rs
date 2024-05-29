@@ -5,7 +5,9 @@ use testcontainers_modules::postgres;
 
 use crate::{
     get_db_pool_conn,
-    idiom_resource::repository::{select_all_idioms, select_all_idioms_not_read},
+    idiom_resource::repository::{
+        select_all_idioms, select_all_idioms_not_read, select_idiom_req_by_id,
+    },
     models::{IdiomDetailEntity, IdiomRequestEntity, IdiomRequestMutations},
     run_migrations,
 };
@@ -211,6 +213,24 @@ async fn test_get_idiom_req_by_id() {
             process::exit(1);
         }
     }
+
+    let idiom_actual_entity = match select_idiom_req_by_id(
+        conn.clone(),
+        "r4UwUyMzB3AB9MoY".to_string(),
+        "1".to_string(),
+    )
+    .await
+    {
+        Ok(data) => data,
+        Err(err) => {
+            println!("Error fetching by id");
+            println!("{:?}", err);
+            process::exit(1);
+        }
+    };
+
+    println!("{:?}", idiom_actual_entity);
+    assert_eq!(idiom_req_entity.idiom.id, idiom_actual_entity.idiom.id);
 
     match idiom_req_entity.update(conn.clone()).await {
         Ok(_) => (),

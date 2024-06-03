@@ -12,6 +12,7 @@ services:
       - learn_idiom_db_data:/var/lib/postgresql/data
     ports:
       - 5440:5432
+    command: ["postgres", "-c", "log_statement=all", "-c", "log_destination=stderr"]
 volumes:
   learn_idiom_db_data:
     driver: local
